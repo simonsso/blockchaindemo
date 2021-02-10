@@ -1,6 +1,10 @@
 // extern crate serde;
 extern crate hmac_sha256;
 
+
+use serde::{Serialize, Deserialize};
+
+#[derive(Serialize, Deserialize)]
 struct Transaction {
     sender: String,
     receiver: String,
@@ -15,6 +19,7 @@ impl Transaction {
     }
 }
 
+#[derive(Serialize, Deserialize)]
 struct Block {
     payload: Vec<Transaction>,
     nonce: u64,
@@ -121,18 +126,28 @@ mod test {
         let mut block = super::Block::new(vec![], 0, 0, [0; 32]);
         block.mine(0x00FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF);
 
-        // This is slower
+        // This is slower but a better proof of work
         // assert_eq!(block.sha, block.hash());
         // block.mine(0x000FFFFFFFFFFFFFFFFFFFFFFFFFFFFF);
 
         assert_eq!(block.sha, block.hash());
     }
-    // #[test]
-    // fn test_serialize(){
-    //     use super::Hashable;
-    //     let mut block = super::Block::new([0; 4096], 0, 0, [0; 32]);
-    //     block.mine(0x00FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF);
-    //     let ser = bincode::serialize(&block);
+    #[test]
+    fn test_serialize(){
+        use super::Hashable;
+        let mut block = super::Block::new(vec![super::Transaction::new("Alice", "Bob", 999)], 0, 0, [0; 32]);
+        block.mine(0x00FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF);
+        let ser = rmp_serde::to_vec(&block);
+        if let Ok(ser) = ser {
+            print!("");
+        }else{
+            assert!(false);
+        }
+        // if let Some(desr) = rmp_serde::decode::read_slice(ser,ser.len()) {
 
-    // }
+        // }else{
+        //     assert!(false);
+        // }
+
+    }
 }
