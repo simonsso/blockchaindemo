@@ -1,3 +1,6 @@
+// extern crate serde;
+extern crate hmac_sha256;
+
 struct Block {
     payload: [u8; 4096],
     nonce: u64,
@@ -6,7 +9,6 @@ struct Block {
     sha: [u8; 32],
 }
 
-extern crate hmac_sha256;
 trait Hashable {
     fn bytes(&self) -> Vec<u8>;
     fn hash(&self) -> [u8; 32] {
@@ -52,6 +54,28 @@ impl Block {
     }
 }
 fn main() {
+    let mut v: Vec<Block> = vec![
+        Block::new([0; 4096], 0, 0, [0; 32]),
+        Block::new([0; 4096], 0, 1, [0; 32]),
+    ];
+
+    let mut lasthash = [0; 32];
+    for mut block in v.iter_mut() {
+        block.prev_sha = lasthash;
+        block.mine(0x00FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF);
+        lasthash = block.sha;
+    }
+    // verify the block chain
+    let mut lasthash = [0; 32];
+    for mut block in v {
+        let calculated = block.hash();
+        println!(
+            "Checking {} N={} {}",
+            block.seq,
+            block.nonce,
+            calculated == block.sha
+        );
+    }
     println!("Hello, world!");
 }
 
@@ -73,4 +97,12 @@ mod test {
 
         assert_eq!(block.sha, block.hash());
     }
+    // #[test]
+    // fn test_serialize(){
+    //     use super::Hashable;
+    //     let mut block = super::Block::new([0; 4096], 0, 0, [0; 32]);
+    //     block.mine(0x00FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF);
+    //     let ser = bincode::serialize(&block);
+
+    // }
 }
