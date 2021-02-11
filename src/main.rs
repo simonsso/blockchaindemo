@@ -8,12 +8,12 @@ use serde::{Serialize, Deserialize};
 struct Transaction {
     sender: String,
     receiver: String,
-    amount: u128, // Unsigned reverse sender and receiver to reverse transactions
+    amount: u64, // Unsigned reverse sender and receiver to reverse transactions
 }
 
 impl Transaction {
 
-    fn new<S:Into<String>,R:Into<String>>(s:S,r:R,amount:u128)->Self
+    fn new<S:Into<String>,R:Into<String>>(s:S,r:R,amount:u64)->Self
     {
         Transaction{sender:s.into(),receiver:r.into(),amount}
     }
@@ -75,14 +75,14 @@ impl Block {
             sha: [0xff; 32],
         }
     }
-    fn mine(&mut self, difficulty: u128) {
+    fn mine(&mut self, difficulty: u64) {
         use std::convert::TryInto;
-        let mut d = u128::from_be_bytes((self.sha[0..16]).try_into().unwrap());
+        let mut d = u64::from_be_bytes((self.sha[0..8]).try_into().unwrap());
         while d > difficulty {
             self.nonce += 7;
             let hash = self.hash();
             self.sha = hash;
-            d = u128::from_be_bytes((self.sha[0..16]).try_into().unwrap());
+            d = u64::from_be_bytes((self.sha[0..8]).try_into().unwrap());
         }
     }
 }
@@ -95,7 +95,7 @@ fn main() {
     let mut lasthash = [0; 32];
     for mut block in v.iter_mut() {
         block.prev_sha = lasthash;
-        block.mine(0x00FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF);
+        block.mine(0x00FFFFFFFFFFFFFF);
         lasthash = block.sha;
     }
     // verify the block chain
@@ -124,7 +124,7 @@ mod test {
     fn test_calculate_hash() {
         use super::Hashable;
         let mut block = super::Block::new(vec![], 0, 0, [0; 32]);
-        block.mine(0x00FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF);
+        block.mine(0x00FFFFFFFFFFFFFF);
 
         // This is slower but a better proof of work
         // assert_eq!(block.sha, block.hash());
@@ -136,7 +136,7 @@ mod test {
     fn test_serialize(){
         use super::Hashable;
         let mut block = super::Block::new(vec![super::Transaction::new("Alice", "Bob", 999)], 0, 0, [0; 32]);
-        block.mine(0x00FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF);
+        block.mine(0x00FFFFFFFFFFFFFF);
         let ser = rmp_serde::to_vec(&block);
         if let Ok(ser) = ser {
             print!("");
