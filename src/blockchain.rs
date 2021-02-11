@@ -1,15 +1,16 @@
+use crate::hashable::Hashable;
 use crate::Block;
 
-pub struct BlockChain {
-    v: Vec<Block>,
-}
-  use crate::hashable::Hashable;
+pub type BlockChain = Vec<Block>;
 
-impl BlockChain {
-    pub fn verify(&self) {
+trait BlockChainTrait {
+    fn verify(&self) -> bool;
+}
+impl BlockChainTrait for BlockChain {
+    fn verify(&self) -> bool {
         // verify the block chain
         let mut lasthash = [0; 32];
-        for block in &self.v {
+        for block in self {
             let calculated = block.hash();
             println!(
                 "Checking {} N={} {}",
@@ -19,16 +20,18 @@ impl BlockChain {
             );
             lasthash = calculated
         }
+        true
     }
 }
 
 #[cfg(test)]
 mod test {
+    use crate::Block;
+    use crate::BlockChain;
+    use crate::Transaction;
     #[test]
     fn test_create_a_chain() {
-        use crate::Block;
-        use crate::Transaction;
-        let mut v: Vec<Block> = vec![
+        let mut v: BlockChain = vec![
             Block::new(
                 vec![
                     Transaction::new("Alice", "Bob", 128),
