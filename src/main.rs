@@ -1,12 +1,12 @@
 use blockchaindemolib::*;
 
 fn main() {
-    let mut v: Vec<Block> = vec![
+    let mut v: BlockChain = vec![
         Block::new(
             vec![
-                Transaction::new("Alice", "Bob", 128),
-                Transaction::new("Alice", "Eve", 28),
-            ],
+            Transaction::new("Alice", "Bob", 128),
+            Transaction::new("Alice", "Eve", 28),
+        ],
             0,
             0,
             [0; 32],
