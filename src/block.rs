@@ -42,14 +42,13 @@ impl Block {
             sha: [0xff; 32],
         }
     }
-    pub fn mine(&mut self, difficulty: u64) {
+    pub fn mine(&mut self, difficulty: u32) {
         use std::convert::TryInto;
-        let mut d = u64::from_be_bytes((self.sha[0..8]).try_into().unwrap());
-        while d > difficulty {
+        let difficulty = u128::MAX >> difficulty;
+        while u128::from_be_bytes((self.sha[0..16]).try_into().unwrap()) > difficulty {
             self.nonce += 7;
             let hash = self.hash();
             self.sha = hash;
-            d = u64::from_be_bytes((self.sha[0..8]).try_into().unwrap());
         }
     }
 }
@@ -62,11 +61,11 @@ mod test {
     #[test]
     fn test_calculate_hash() {
         let mut block = super::Block::new(vec![], 0, 0, [0; 32]);
-        block.mine(0x00FFFFFFFFFFFFFF);
+        block.mine(8);
 
         // This is slower but a better proof of work
         // assert_eq!(block.sha, block.hash());
-        // block.mine(0x000FFFFFFFFFFFFFFFFFFFFFFFFFFFFF);
+        // block.mine(24);
 
         assert_eq!(block.sha, block.hash());
     }
@@ -78,7 +77,7 @@ mod test {
             0,
             [0; 32],
         );
-        block.mine(0x00FFFFFFFFFFFFFF);
+        block.mine(10);
         let ser = rmp_serde::to_vec(&block);
         if let Err(e) = ser {
             eprintln!("Serializing failed: {}", e);

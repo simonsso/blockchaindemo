@@ -1,5 +1,3 @@
-// extern crate serde;
-extern crate hmac_sha256;
 use blockchaindemolib::*;
 
 fn main() {
@@ -19,7 +17,7 @@ fn main() {
     let mut lasthash = [0; 32];
     for mut block in v.iter_mut() {
         block.prev_sha = lasthash;
-        block.mine(0x00FFFFFFFFFFFFFF);
+        block.mine(8);
         lasthash = block.sha;
     }
     // verify the block chain
