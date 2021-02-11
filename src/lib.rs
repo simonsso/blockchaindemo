@@ -4,3 +4,5 @@ mod transaction;
 pub use crate::transaction::Transaction;
 mod hashable;
 pub use crate::hashable::Hashable;
+mod blockchain;
+pub use crate::blockchain::BlockChain;
