@@ -44,9 +44,10 @@ impl Block {
     }
     pub fn mine(&mut self, difficulty: u32) {
         use std::convert::TryInto;
+        self.sha = [0xff; 32]; // Force recalculate
         let difficulty = u128::MAX >> difficulty;
         while u128::from_be_bytes((self.sha[0..16]).try_into().unwrap()) > difficulty {
-            self.nonce += 7;
+            self.nonce += 1;
             let hash = self.hash();
             self.sha = hash;
         }

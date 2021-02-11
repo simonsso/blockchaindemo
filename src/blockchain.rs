@@ -12,12 +12,10 @@ impl BlockChainTrait for BlockChain {
         let mut lasthash = [0; 32];
         for block in self {
             let calculated = block.hash();
-            println!(
-                "Checking {} N={} {}",
-                block.seq,
-                block.nonce,
-                calculated == block.sha && block.prev_sha == lasthash
-            );
+            if calculated != block.sha || block.prev_sha != lasthash {
+                return false;
+            }
+
             lasthash = calculated
         }
         true
@@ -26,6 +24,7 @@ impl BlockChainTrait for BlockChain {
 
 #[cfg(test)]
 mod test {
+    use crate::blockchain::BlockChainTrait;
     use crate::Block;
     use crate::BlockChain;
     use crate::Transaction;
@@ -49,6 +48,35 @@ mod test {
             block.prev_sha = lasthash;
             block.mine(8);
             lasthash = block.sha;
+        }
+    }
+    #[test]
+    fn test_serialize_a_chain() {
+        let mut chain: BlockChain = vec![
+            Block::new(vec![Transaction::new("Alice", "Bob", 999)], 0, 0, [0; 32]),
+            Block::new(vec![Transaction::new("Bob", "Eve", 20)], 0, 1, [0; 32]),
+        ];
+        assert!(!chain.verify());
+        chain[0].mine(10);
+        chain[1].prev_sha = chain[0].sha;
+        chain[1].mine(10);
+        assert!(chain.verify());
+
+        let ser = rmp_serde::to_vec(&chain);
+
+        match ser {
+            Err(e) => {
+                eprintln!("Serializing failed: {}", e);
+                assert!(false);
+            }
+            Ok(ser) => {
+                let clonechain: Option<BlockChain> = rmp_serde::from_read_ref(&ser).ok();
+                if let Some(clonechain) = clonechain {
+                    assert!(clonechain.verify());
+                } else {
+                    assert!(false); // clonechain was not read correctly
+                }
+            }
         }
     }
 }
