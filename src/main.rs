@@ -1,8 +1,7 @@
 // extern crate serde;
 extern crate hmac_sha256;
 
-
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize)]
 struct Transaction {
@@ -12,10 +11,12 @@ struct Transaction {
 }
 
 impl Transaction {
-
-    fn new<S:Into<String>,R:Into<String>>(s:S,r:R,amount:u64)->Self
-    {
-        Transaction{sender:s.into(),receiver:r.into(),amount}
+    fn new<S: Into<String>, R: Into<String>>(s: S, r: R, amount: u64) -> Self {
+        Transaction {
+            sender: s.into(),
+            receiver: r.into(),
+            amount,
+        }
     }
 }
 
@@ -88,7 +89,15 @@ impl Block {
 }
 fn main() {
     let mut v: Vec<Block> = vec![
-        Block::new(vec![Transaction::new("Alice", "Bob", 128),Transaction::new("Alice", "Eve", 28)], 0, 0, [0; 32]),
+        Block::new(
+            vec![
+                Transaction::new("Alice", "Bob", 128),
+                Transaction::new("Alice", "Eve", 28),
+            ],
+            0,
+            0,
+            [0; 32],
+        ),
         Block::new(vec![Transaction::new("Bob", "Eve", 108)], 0, 1, [0; 32]),
     ];
 
@@ -106,8 +115,7 @@ fn main() {
             "Checking {} N={} {}",
             block.seq,
             block.nonce,
-            calculated == block.sha &&
-            block.prev_sha == lasthash
+            calculated == block.sha && block.prev_sha == lasthash
         );
         lasthash = calculated
     }
@@ -133,21 +141,19 @@ mod test {
         assert_eq!(block.sha, block.hash());
     }
     #[test]
-    fn test_serialize(){
-        use super::Hashable;
-        let mut block = super::Block::new(vec![super::Transaction::new("Alice", "Bob", 999)], 0, 0, [0; 32]);
+    fn test_serialize() {
+        let mut block = super::Block::new(
+            vec![super::Transaction::new("Alice", "Bob", 999)],
+            0,
+            0,
+            [0; 32],
+        );
         block.mine(0x00FFFFFFFFFFFFFF);
         let ser = rmp_serde::to_vec(&block);
-        if let Ok(ser) = ser {
+        if let Ok(_ser) = ser {
             print!("");
-        }else{
+        } else {
             assert!(false);
         }
-        // if let Some(desr) = rmp_serde::decode::read_slice(ser,ser.len()) {
-
-        // }else{
-        //     assert!(false);
-        // }
-
     }
 }
