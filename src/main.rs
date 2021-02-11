@@ -150,9 +150,8 @@ mod test {
         );
         block.mine(0x00FFFFFFFFFFFFFF);
         let ser = rmp_serde::to_vec(&block);
-        if let Ok(_ser) = ser {
-            print!("");
-        } else {
+        if let Err(e) = ser {
+            eprintln!("Serializing failed: {}", e);
             assert!(false);
         }
     }
