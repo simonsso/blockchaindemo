@@ -8,6 +8,7 @@ pub struct Block {
     pub seq: u64,
     pub prev_sha: [u8; 32],
     pub sha: [u8; 32],
+    pub difficulty: u32,
 }
 
 use crate::Hashable;
@@ -25,8 +26,7 @@ impl Hashable for Block {
         );
         bytes.extend(self.prev_sha.iter());
         bytes.extend(self.seq.to_be_bytes().iter());
-        // bytes.extend(self.nonce.to_be_bytes());
-        // bytes.extend(self.nonce.to_be_bytes());
+        bytes.extend(self.difficulty.to_be_bytes().iter());
 
         bytes
     }
@@ -40,10 +40,12 @@ impl Block {
             seq,
             prev_sha,
             sha: [0xff; 32],
+            difficulty: 0,
         }
     }
     pub fn mine(&mut self, difficulty: u32) {
         use std::convert::TryInto;
+        self.difficulty = difficulty;
         self.sha = [0xff; 32]; // Force recalculate
         let difficulty = u128::MAX >> difficulty;
         while u128::from_be_bytes((self.sha[0..16]).try_into().unwrap()) > difficulty {
@@ -51,6 +53,11 @@ impl Block {
             let hash = self.hash();
             self.sha = hash;
         }
+    }
+    /// Verify the block with claimed difficulty
+    pub fn verify_difficulty(&self) -> bool {
+        use std::convert::TryInto;
+        u128::from_be_bytes((self.sha[0..16]).try_into().unwrap()) <= (u128::MAX >> self.difficulty)
     }
 }
 

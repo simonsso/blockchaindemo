@@ -8,14 +8,25 @@ trait BlockChainTrait {
 }
 impl BlockChainTrait for BlockChain {
     fn verify(&self) -> bool {
-        // verify the block chain
+        // verify the blocks chain
         let mut lasthash = [0; 32];
+        let mut lastdifficulty = 0;
         for block in self {
+            // later blocks should be mined with a higher or equal difficulty
+            if block.difficulty < lastdifficulty {
+                return false;
+            } else {
+                lastdifficulty = block.difficulty;
+            }
+            if !block.verify_difficulty() {
+                return false;
+            }
             let calculated = block.hash();
+
+            // verify the hashes hash the block.
             if calculated != block.sha || block.prev_sha != lasthash {
                 return false;
             }
-
             lasthash = calculated
         }
         true
@@ -57,7 +68,7 @@ mod test {
             Block::new(vec![Transaction::new("Bob", "Eve", 20)], 0, 1, [0; 32]),
         ];
         assert!(!chain.verify());
-        chain[0].mine(10);
+        chain[0].mine(9);
         chain[1].prev_sha = chain[0].sha;
         chain[1].mine(10);
         assert!(chain.verify());
