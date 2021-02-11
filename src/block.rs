@@ -3,14 +3,12 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize)]
 pub struct Block {
-   pub payload: Vec<Transaction>,
-   pub nonce: u64,
-   pub seq: u64,
-   pub prev_sha: [u8; 32],
-   pub sha: [u8; 32],
+    pub payload: Vec<Transaction>,
+    pub nonce: u64,
+    pub seq: u64,
+    pub prev_sha: [u8; 32],
+    pub sha: [u8; 32],
 }
-
-
 
 use crate::Hashable;
 
@@ -59,8 +57,8 @@ impl Block {
 #[cfg(test)]
 mod test {
 
-  // use super::blockchaindemolib::*;
-  use crate::hashable::Hashable;
+    // use super::blockchaindemolib::*;
+    use crate::hashable::Hashable;
     #[test]
     fn test_calculate_hash() {
         let mut block = super::Block::new(vec![], 0, 0, [0; 32]);

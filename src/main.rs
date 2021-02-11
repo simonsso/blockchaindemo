@@ -2,7 +2,6 @@
 extern crate hmac_sha256;
 use blockchaindemolib::*;
 
-
 fn main() {
     let mut v: Vec<Block> = vec![
         Block::new(
