@@ -1,6 +1,6 @@
 use blockchaindemolib::*;
 
-fn main() {
+fn main() -> Result<(), Box<dyn std::error::Error>> {
     // use crate::blockchain::BlockChainTrait;
 
     let mut v: BlockChain = vec![
@@ -44,12 +44,13 @@ fn main() {
 
     // Verify the chain again just to make sure we have not lost ownership
     println!("Final verify: {}", v.verify());
+    Ok({})
 }
 
 #[cfg(test)]
 mod test {
     #[test]
     fn test_hello() {
-        assert_eq!(super::main(), {})
+        assert_eq!(super::main().is_ok(), true);
     }
 }
