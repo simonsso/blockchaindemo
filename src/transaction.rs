@@ -27,4 +27,3 @@ impl Hashable for Transaction {
         v
     }
 }
-

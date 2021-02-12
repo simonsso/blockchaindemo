@@ -5,8 +5,23 @@ pub type BlockChain = Vec<Block>;
 
 pub trait BlockChainTrait {
     fn verify(&self) -> bool;
+    fn get_balance(&self) -> std::collections::BTreeMap<String, i128>;
 }
+
 impl BlockChainTrait for BlockChain {
+    fn get_balance(&self) -> std::collections::BTreeMap<String, i128> {
+        let mut balance = std::collections::BTreeMap::new();
+        for t in self.iter().flat_map(|b| b.payload.iter()) {
+            // println!("{}->{} : {}",t.sender, t.receiver, t.amount);
+
+            let sender = t.sender.clone();
+            let receiver = t.receiver.clone();
+            *balance.entry(receiver).or_insert(0) += t.amount as i128; // Transaction of unsigned 64 bit fits in signed 128
+            *balance.entry(sender).or_insert(0) -= t.amount as i128;
+        }
+        balance
+    }
+
     fn verify(&self) -> bool {
         // verify the blocks chain
         let mut lasthash = [0; 32];

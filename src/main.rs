@@ -35,26 +35,15 @@ fn main() {
         lasthash = calculated
     }
 
-    // First attempt to create a ledger
-    let mut balance = std::collections::BTreeMap::new();
-    for t in v.iter().flat_map(|b| b.payload.iter()) {
-        println!("{}->{} : {}",t.sender, t.receiver, t.amount);
-
-        let sender = t.sender.clone();
-        let receiver = t.receiver.clone();
-        *balance.entry(receiver).or_insert(0) += t.amount as i128; // Transaction of unsigned 64 bit fits in signed 128
-        *balance.entry(sender).or_insert(0) -= t.amount as i128;
-    };
+    let balance = v.get_balance();
 
     println!("Dump balance:");
-    for (user,cash) in balance {
-        println!("{}  {}",user, cash);
+    for (user, cash) in balance {
+        println!("{}  {}", user, cash);
     }
 
-    // Verify the chain again just to make sure we have not lost ownership 
-    println!("Final verify: {}",v.verify());
-
-
+    // Verify the chain again just to make sure we have not lost ownership
+    println!("Final verify: {}", v.verify());
 }
 
 #[cfg(test)]
