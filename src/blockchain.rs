@@ -2,14 +2,29 @@ use crate::hashable::Hashable;
 use crate::Block;
 
 pub type BlockChain = Vec<Block>;
+use std::fs;
 
 pub trait BlockChainTrait {
     fn verify(&self) -> bool;
     fn get_balance(&self) -> std::collections::BTreeMap<String, i128>;
     fn export(&self) -> Result<Vec<u8>, rmp_serde::encode::Error>;
+    fn read_from_file() -> Result<BlockChain, Box<dyn std::error::Error>>;
+    fn write_to_file(&self) -> Result<(), Box<dyn std::error::Error>>;
 }
 
 impl BlockChainTrait for BlockChain {
+    fn read_from_file() -> Result<BlockChain, Box<dyn std::error::Error>> {
+        let ser = fs::read("blockchain.blkchain")?;
+        let clonechain: BlockChain = rmp_serde::from_read_ref(&ser)?;
+
+        Ok(clonechain)
+    }
+
+    fn write_to_file(&self) -> Result<(), Box<dyn std::error::Error>> {
+        let data: Vec<u8> = self.export()?;
+        Ok(fs::write("blockchain.blkchain", &data)?)
+    }
+
     fn export(&self) -> Result<Vec<u8>, rmp_serde::encode::Error> {
         rmp_serde::to_vec(&self)
     }
@@ -43,7 +58,7 @@ impl BlockChainTrait for BlockChain {
                 return false;
             }
             if block.seq != expectedseq {
-              return false;
+                return false;
             }
             expectedseq += 1;
             let calculated = block.hash();

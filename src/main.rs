@@ -1,23 +1,10 @@
 use blockchaindemolib::*;
-use std::fs;
-
-fn read_chain() -> Result<BlockChain, Box<dyn std::error::Error>> {
-    let ser = fs::read("blockchain.blkchain")?;
-    let clonechain: BlockChain = rmp_serde::from_read_ref(&ser)?;
-
-    Ok(clonechain)
-}
-
-fn write_chain(chain:BlockChain)-> Result<(),Box<dyn std::error::Error>>{
-    let data:Vec<u8> = chain.export()?;
-    Ok(fs::write("blockchain.blkchain", &data)?)
-}
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     // use crate::blockchain::BlockChainTrait;
 
-    let mut chain: BlockChain = read_chain()
-        .or_else(|_| -> Result<BlockChain, Box<dyn std::error::Error>> {
+    let mut chain: BlockChain = BlockChain::read_from_file().or_else(
+        |_| -> Result<BlockChain, Box<dyn std::error::Error>> {
             Ok(vec![
                 Block::new(
                     vec![
@@ -30,9 +17,14 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 ),
                 Block::new(vec![Transaction::new("Bob", "Eve", 108)], 0, 1, [0; 32]),
             ])
-        })
-        ?;
-        chain.push(Block::new(vec![Transaction::new("Bob", "Eve", 99)], 0, chain.len() as u64, [0; 32]));
+        },
+    )?;
+    chain.push(Block::new(
+        vec![Transaction::new("Bob", "Eve", 99)],
+        0,
+        chain.len() as u64,
+        [0; 32],
+    ));
 
     let mut lasthash = [0; 32];
     for mut block in chain.iter_mut() {
@@ -41,11 +33,11 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         lasthash = block.sha;
     }
 
-    println!("Hello {}",chain.len());
-    println!("Verify {}",chain.verify());
+    println!("Hello {}", chain.len());
+    println!("Verify {}", chain.verify());
     if chain.verify() {
         println!("Save file");
-        write_chain(chain)?
+        chain.write_to_file()?
     }
     Ok({})
 }
