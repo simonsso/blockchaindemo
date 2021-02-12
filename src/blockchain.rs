@@ -3,7 +3,7 @@ use crate::Block;
 
 pub type BlockChain = Vec<Block>;
 
-trait BlockChainTrait {
+pub trait BlockChainTrait {
     fn verify(&self) -> bool;
 }
 impl BlockChainTrait for BlockChain {

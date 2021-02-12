@@ -6,3 +6,4 @@ mod hashable;
 pub use crate::hashable::Hashable;
 mod blockchain;
 pub use crate::blockchain::BlockChain;
+pub use crate::blockchain::BlockChainTrait;

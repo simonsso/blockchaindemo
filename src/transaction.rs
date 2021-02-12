@@ -2,9 +2,9 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize)]
 pub struct Transaction {
-    sender: String,
-    receiver: String,
-    amount: u64, // Unsigned reverse sender and receiver to reverse transactions
+    pub sender: String,
+    pub receiver: String,
+    pub amount: u64, // Unsigned reverse sender and receiver to reverse transactions
 }
 
 impl Transaction {
@@ -27,3 +27,4 @@ impl Hashable for Transaction {
         v
     }
 }
+
