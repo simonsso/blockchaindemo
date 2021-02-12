@@ -6,9 +6,14 @@ pub type BlockChain = Vec<Block>;
 pub trait BlockChainTrait {
     fn verify(&self) -> bool;
     fn get_balance(&self) -> std::collections::BTreeMap<String, i128>;
+    fn export(&self) -> Result<Vec<u8>, rmp_serde::encode::Error>;
 }
 
 impl BlockChainTrait for BlockChain {
+    fn export(&self) -> Result<Vec<u8>, rmp_serde::encode::Error> {
+        rmp_serde::to_vec(&self)
+    }
+
     fn get_balance(&self) -> std::collections::BTreeMap<String, i128> {
         let mut balance = std::collections::BTreeMap::new();
         for t in self.iter().flat_map(|b| b.payload.iter()) {
@@ -26,6 +31,7 @@ impl BlockChainTrait for BlockChain {
         // verify the blocks chain
         let mut lasthash = [0; 32];
         let mut lastdifficulty = 0;
+        let mut expectedseq = 0;
         for block in self {
             // later blocks should be mined with a higher or equal difficulty
             if block.difficulty < lastdifficulty {
@@ -36,6 +42,10 @@ impl BlockChainTrait for BlockChain {
             if !block.verify_difficulty() {
                 return false;
             }
+            if block.seq != expectedseq {
+              return false;
+            }
+            expectedseq += 1;
             let calculated = block.hash();
 
             // verify the hashes hash the block.
@@ -77,7 +87,7 @@ mod test {
         }
     }
     #[test]
-    fn test_serialize_a_chain() {
+    fn test_serialize_a_raw_chain() {
         let mut chain: BlockChain = vec![
             Block::new(vec![Transaction::new("Alice", "Bob", 999)], 0, 0, [0; 32]),
             Block::new(vec![Transaction::new("Bob", "Eve", 20)], 0, 1, [0; 32]),
