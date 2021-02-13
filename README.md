@@ -1,6 +1,13 @@
 # blockchaindemo ![Rust](https://github.com/simonsso/blockchaindemo/workflows/Rust/badge.svg)
 A simple blockchain demo in rust.
+## Compile
+Project can be compiled with rust stable toolchain
+<pre>
+cargo build
+</pre>
+The executable will be stored in target/debug/blockchaindemo
 
+## Running the executable
 Run from command line without argument to verify integrity of blockchain and with transaction to create and mine a transaction on the blockchain.
 ### Verify chain integrity
 Run command without arguments:
@@ -22,6 +29,7 @@ OPTIONS:
     -r, --receiver <receiver>    Receiver of tokens
     -s, --sender <sender>        Sender of tokens
 </pre>
+
 ## Documentation
 * [Application](blockchaindemo/blockchaindemo/index.html)
 * [Datastructures](blockchaindemo/blockchaindemolib/index.html)
