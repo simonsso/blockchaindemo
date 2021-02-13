@@ -92,7 +92,11 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         lasthash = block.sha;
     }
 
-    println!("Verify chain of {} blocks. Verifed: {}",chain.len() ,chain.verify());
+    println!(
+        "Verify chain of {} blocks. Verifed: {}",
+        chain.len(),
+        chain.verify()
+    );
 
     let balance = chain.get_balance();
 
