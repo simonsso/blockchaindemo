@@ -1,5 +1,7 @@
 use serde::{Deserialize, Serialize};
 
+
+/// Simple transaction to transfer amount of silver from sender to receiver
 #[derive(Serialize, Deserialize)]
 pub struct Transaction {
     pub sender: String,
