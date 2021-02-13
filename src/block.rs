@@ -1,4 +1,3 @@
-// use blockchaindemolib::*;
 use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize)]
@@ -63,8 +62,6 @@ impl Block {
 
 #[cfg(test)]
 mod test {
-
-    // use super::blockchaindemolib::*;
     use crate::hashable::Hashable;
     #[test]
     fn test_calculate_hash() {
