@@ -1,1 +1,1 @@
-initSidebarItems({"enum":[["BlockChainDemoError",""]],"fn":[["main","A simple demo"]]});
+initSidebarItems({"fn":[["main","A simple demo"]]});
