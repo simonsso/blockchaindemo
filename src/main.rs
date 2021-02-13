@@ -1,5 +1,22 @@
 use blockchaindemolib::*;
 
+/// A simple demo
+///
+/// Run from command line with
+///```text
+///  USAGE:
+// blockchaindemo transaction --amount <amount> --receiver <receiver> --sender <sender>
+
+// FLAGS:
+//     -h, --help       Prints help information
+//     -V, --version    Prints version information
+
+// OPTIONS:
+//     -a, --amount <amount>
+//     -r, --receiver <receiver>    Receiver of tokens
+//     -s, --sender <sender>        Sender of tokens
+/// ```
+///
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let matches = clap::App::new("Blockchain demo")
         .author("Fredrik SIMONSSON")
@@ -90,53 +107,4 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         chain.write_to_file()?
     }
     Ok({})
-}
-
-#[cfg(test)]
-mod test {
-    // Todo make proper test of this now it is only test if it compiles
-    #[test]
-    fn test_ledger() {
-        use super::*;
-        let mut v: BlockChain = vec![
-            Block::new(
-                vec![
-                    Transaction::new("Alice", "Bob", 128),
-                    Transaction::new("Alice", "Eve", 28),
-                ],
-                0,
-                0,
-                [0; 32],
-            ),
-            Block::new(vec![Transaction::new("Bob", "Eve", 108)], 0, 1, [0; 32]),
-        ];
-
-        let mut lasthash = [0; 32];
-        for mut block in v.iter_mut() {
-            block.prev_sha = lasthash;
-            block.mine(8);
-            lasthash = block.sha;
-        }
-        // verify the block chain
-        let mut lasthash = [0; 32];
-        for block in &v {
-            let calculated = block.hash();
-            println!(
-                "Checking {} N={} {}",
-                block.seq,
-                block.nonce,
-                calculated == block.sha && block.prev_sha == lasthash
-            );
-            lasthash = calculated
-        }
-
-        let balance = v.get_balance();
-
-        println!("Dump balance:");
-        for (user, cash) in balance {
-            println!("{}  {}", user, cash);
-        }
-        // Verify the chain again just to make sure we have not lost ownership
-        println!("Final verify: {}", v.verify());
-    }
 }
