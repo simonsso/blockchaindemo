@@ -46,51 +46,69 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                         .short("a")
                         .long("amount")
                         .takes_value(true),
+                )
+                .arg(
+                    clap::Arg::with_name("doubledifficultly")
+                        .required(false)
+                        .short("d")
+                        .long("doubledifficultly")
+                        .takes_value(false),
                 ),
         )
         .get_matches();
 
-    // load or genesis
-    let mut chain: BlockChain = BlockChain::read_from_file().or_else(
-        |_| -> Result<BlockChain, Box<dyn std::error::Error>> {
-            Ok(vec![Block::new(
-                vec![
-                    Transaction::new("Alice", "Bob", 128),
-                    Transaction::new("Satoshi", "Eve", 28),
-                ],
-                0,
-                0,
-                [0; 32],
-            )])
-        },
-    )?;
+    // load or create am empty if it fails.
+    let mut chain: BlockChain = BlockChain::read_from_file().unwrap_or(vec![]);
+
+    // If chain len is 0 either from loading an empty chain or from vec![] above - add and mine a genesis block
+    if chain.len() == 0 {
+        chain.push(Block::new(
+            vec![
+                Transaction::new("Alice", "Bob", 128),
+                Transaction::new("Satoshi", "Eve", 28),
+            ],
+            0,
+            0,
+            [0; 32],
+        ));
+        chain[0].prev_sha = [0; 32];
+        chain[0].mine(8);
+    }
 
     if let Some(transaction) = matches.subcommand_matches("transaction") {
-        let sender = transaction.value_of("sender");
-        let receiver = transaction.value_of("receiver");
-        let amount = transaction.value_of("amount");
+        // Internal Error should never happen, as clap will catch usage errors
+        let sender = transaction
+            .value_of("sender")
+            .ok_or(BlockChainDemoError::InternalError)?;
+        let receiver = transaction
+            .value_of("receiver")
+            .ok_or(BlockChainDemoError::InternalError)?;
+        let amount = transaction
+            .value_of("amount")
+            .ok_or(BlockChainDemoError::InternalError)?
+            .parse::<u64>()?;
 
-        let amount = amount.unwrap_or("0").parse::<u64>();
-        if sender.is_none() || receiver.is_none() || amount.is_err() {
-            //
-            return Err(BlockChainDemoError::UsageError.into());
-        };
-        let t = Transaction::new(sender.unwrap(), receiver.unwrap(), amount.unwrap());
+        let t = Transaction::new(sender, receiver, amount);
 
-        let lastsha = if let Some(prev) = chain.last() {
-            prev.sha
-        } else {
-            [0; 32]
-        };
+        // At this point there should always be a genesis block
+        let lastsha = chain.last().ok_or(BlockChainDemoError::GenesisError)?.sha;
         let mut block = Block::new(vec![t], 0, chain.len() as u64, lastsha);
-        block.mine(8);
+        let difficulty = chain
+            .last()
+            .ok_or(BlockChainDemoError::GenesisError)?
+            .difficulty;
+        let difficulty = if transaction.is_present("doubledifficultly") {
+            difficulty + 1
+        } else {
+            difficulty
+        };
+
+        println!(
+            "Mining block {} with difficulty {} bits",
+            block.seq, difficulty
+        );
+        block.mine(difficulty);
         chain.push(block);
-    }
-    let mut lasthash = [0; 32];
-    for mut block in chain.iter_mut() {
-        block.prev_sha = lasthash;
-        block.mine(8);
-        lasthash = block.sha;
     }
 
     println!(
