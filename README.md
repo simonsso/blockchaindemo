@@ -1,5 +1,8 @@
 # blockchaindemo ![Rust](https://github.com/simonsso/blockchaindemo/workflows/Rust/badge.svg)
 A simple blockchain demo in rust.
+## Documentation
+* [Application](blockchaindemo/blockchaindemo/index.html)
+* [Datastructures](blockchaindemo/blockchaindemolib/index.html)
 ## Compile
 Project can be compiled with rust stable toolchain
 <pre>
@@ -30,6 +33,3 @@ OPTIONS:
     -s, --sender <sender>        Sender of tokens
 </pre>
 
-## Documentation
-* [Application](blockchaindemo/blockchaindemo/index.html)
-* [Datastructures](blockchaindemo/blockchaindemolib/index.html)
