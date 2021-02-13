@@ -1,4 +1,4 @@
-# blockchaindemo![Rust](https://github.com/simonsso/blockchaindemo/workflows/Rust/badge.svg)
+# blockchaindemo ![Rust](https://github.com/simonsso/blockchaindemo/workflows/Rust/badge.svg)
 A simple blockchain demo in rust.
 
 Run from command line without argument to verify integrity of blockchain and with transaction to create and mine a transaction on the blockchain.
