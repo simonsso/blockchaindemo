@@ -59,12 +59,14 @@ pub trait BlockChainTrait {
 }
 
 impl BlockChainTrait for BlockChain {
+    /// Read data from the file blockchain.blkchain (hardcoded)
     fn read_from_file() -> Result<BlockChain, Box<dyn std::error::Error>> {
         let ser = fs::read("blockchain.blkchain")?;
         let clonechain: BlockChain = rmp_serde::from_read_ref(&ser)?;
 
         Ok(clonechain)
     }
+    /// Write data to the file blockchain.blkchain (hardcoded)
 
     fn write_to_file(&self) -> Result<(), Box<dyn std::error::Error>> {
         let data: Vec<u8> = self.export()?;
@@ -75,6 +77,8 @@ impl BlockChainTrait for BlockChain {
         rmp_serde::to_vec(&self)
     }
 
+    /// Sum all transactions in the ledger and generate account balances
+    ///  
     fn get_balance(&self) -> std::collections::BTreeMap<String, i128> {
         let mut balance = std::collections::BTreeMap::new();
         for t in self.iter().flat_map(|b| b.payload.iter()) {
@@ -88,6 +92,8 @@ impl BlockChainTrait for BlockChain {
         balance
     }
 
+    /// Verify a chain of blocks, sha should be correct, difficulty should not decrease, sequence number must increment by 1
+    /// sha of previous block must also be correct
     fn verify(&self) -> bool {
         // verify the blocks chain
         let mut lasthash = [0; 32];

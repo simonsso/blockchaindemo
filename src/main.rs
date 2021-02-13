@@ -1,5 +1,20 @@
 use blockchaindemolib::*;
+use std::fmt;
 
+#[derive(Debug)]
+pub enum BlockChainDemoError {
+    UsageError,
+    InternalError,
+}
+impl std::fmt::Display for BlockChainDemoError {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match self {
+            BlockChainDemoError::UsageError => write!(f, "Usage error"),
+            BlockChainDemoError::InternalError => write!(f, "Internal unexpected error"),
+        }
+    }
+}
+impl std::error::Error for BlockChainDemoError {}
 /// A simple demo
 ///
 /// Run from command line without argument to verify integrity of blockchain and with transaction to create and mine a transaction on the blockchain.
@@ -72,7 +87,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
         let amount = amount.unwrap_or("0").parse::<u64>();
         if sender.is_none() || receiver.is_none() || amount.is_err() {
-            return Ok({}); //TODO return an error here - should be unreachable
+            //
+            return Err(BlockChainDemoError::UsageError.into());
         };
         let t = Transaction::new(sender.unwrap(), receiver.unwrap(), amount.unwrap());
 

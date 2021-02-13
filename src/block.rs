@@ -1,12 +1,17 @@
 use serde::{Deserialize, Serialize};
 
+/// Struct containing a single block
 #[derive(Serialize, Deserialize)]
 pub struct Block {
     pub payload: Vec<Transaction>,
+    /// Modified by miner to get a sha to satisfy difficulty
     pub nonce: u64,
     pub seq: u64,
+    /// Cryptosum for last block
     pub prev_sha: [u8; 32],
+    /// Cryptosum for this block
     pub sha: [u8; 32],
+    /// Number of predefined bits in a successfully mined block
     pub difficulty: u32,
 }
 
@@ -42,6 +47,7 @@ impl Block {
             difficulty: 0,
         }
     }
+    /// Repeatedly calculating sha of the block until it fullfil requirements in difficulty
     pub fn mine(&mut self, difficulty: u32) {
         use std::convert::TryInto;
         self.difficulty = difficulty;
