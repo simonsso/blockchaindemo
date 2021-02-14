@@ -67,12 +67,12 @@ impl BlockChainTrait for BlockChain {
         Ok(clonechain)
     }
     /// Write data to the file blockchain.blkchain (hardcoded)
-
     fn write_to_file(&self) -> Result<(), Box<dyn std::error::Error>> {
         let data: Vec<u8> = self.export()?;
         Ok(fs::write("blockchain.blkchain", &data)?)
     }
 
+    /// Serialize chain to Vec<u8>
     fn export(&self) -> Result<Vec<u8>, rmp_serde::encode::Error> {
         rmp_serde::to_vec(&self)
     }
@@ -82,8 +82,6 @@ impl BlockChainTrait for BlockChain {
     fn get_balance(&self) -> std::collections::BTreeMap<String, i128> {
         let mut balance = std::collections::BTreeMap::new();
         for t in self.iter().flat_map(|b| b.payload.iter()) {
-            // println!("{}->{} : {}",t.sender, t.receiver, t.amount);
-
             let sender = t.sender.clone();
             let receiver = t.receiver.clone();
             *balance.entry(receiver).or_insert(0) += t.amount as i128; // Transaction of unsigned 64 bit fits in signed 128
@@ -133,7 +131,7 @@ mod test {
     use crate::Transaction;
     #[test]
     fn test_create_a_chain() {
-        let mut v: BlockChain = vec![
+        let mut chain: BlockChain = vec![
             Block::new(
                 vec![
                     Transaction::new("Alice", "Bob", 128),
@@ -147,11 +145,14 @@ mod test {
         ];
 
         let mut lasthash = [0; 32];
-        for mut block in v.iter_mut() {
+        for mut block in chain.iter_mut() {
             block.prev_sha = lasthash;
             block.mine(8);
             lasthash = block.sha;
         }
+        let balance = chain.get_balance();
+        assert_eq!(balance.get("Bob".into()), Some(&20));
+        assert_eq!(balance.get("Eve".into()), Some(&(28 + 108)))
     }
     #[test]
     fn test_serialize_a_raw_chain() {

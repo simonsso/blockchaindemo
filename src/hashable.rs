@@ -1,3 +1,4 @@
+/// Any data which a sha may be calculated on
 pub trait Hashable {
     fn bytes(&self) -> Vec<u8>;
     fn hash(&self) -> [u8; 32] {

@@ -21,7 +21,10 @@ impl Transaction {
 use crate::hashable::Hashable;
 impl Hashable for Transaction {
     fn bytes(&self) -> Vec<u8> {
-        let mut v = vec![];
+        // Expected size is known, lets use it.
+        let mut v = Vec::with_capacity(
+            self.sender.len() + self.receiver.len() + std::mem::size_of_val(&self.amount),
+        );
         v.extend(self.sender.as_bytes());
         v.extend(self.receiver.as_bytes());
         v.extend(self.amount.to_be_bytes().iter());

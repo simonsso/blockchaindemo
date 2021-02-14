@@ -19,7 +19,7 @@ use crate::Hashable;
 
 impl Hashable for Block {
     fn bytes(&self) -> Vec<u8> {
-        let mut bytes = Vec::with_capacity(std::mem::size_of::<Block>());
+        let mut bytes = Vec::new();
 
         bytes.extend(self.nonce.to_be_bytes().iter());
         bytes.extend(

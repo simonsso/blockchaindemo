@@ -112,21 +112,23 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     }
 
     println!(
-        "Verify chain of {} blocks. Verifed: {}",
+        "Verify chain of {} blocks. Verified: {}",
         chain.len(),
         chain.verify()
     );
 
     let balance = chain.get_balance();
-
+    println!();
     println!("Dump balance:");
     for (user, cash) in balance {
         println!("{}  {}", user, cash);
     }
+    println!();
 
     if chain.verify() {
         println!("Save file");
-        chain.write_to_file()?
+        chain.write_to_file()
+    } else {
+        Err(BlockChainDemoError::VerifyError.into())
     }
-    Ok({})
 }
