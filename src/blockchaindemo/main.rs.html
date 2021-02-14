@@ -132,6 +132,8 @@
 <span id="132">132</span>
 <span id="133">133</span>
 <span id="134">134</span>
+<span id="135">135</span>
+<span id="136">136</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="ident">blockchaindemolib</span>::<span class="kw-2">*</span>;
 
@@ -140,16 +142,18 @@
 <span class="doccomment">/// Run from command line without argument to verify integrity of blockchain and with transaction to create and mine a transaction on the blockchain.</span>
 <span class="doccomment">/// ```text</span>
 <span class="doccomment">/// USAGE:</span>
-<span class="doccomment">/// blockchaindemo transaction --amount &lt;amount&gt; --receiver &lt;receiver&gt; --sender &lt;sender&gt;</span>
+<span class="doccomment">/// blockchaindemo transaction [FLAGS] --amount &lt;amount&gt; --receiver &lt;receiver&gt; --sender &lt;sender&gt;</span>
 <span class="doccomment">///</span>
 <span class="doccomment">/// FLAGS:</span>
-<span class="doccomment">///     -h, --help       Prints help information</span>
-<span class="doccomment">///     -V, --version    Prints version information</span>
+<span class="doccomment">/// -d, --doubledifficultly    </span>
+<span class="doccomment">/// -h, --help                 Prints help information</span>
+<span class="doccomment">/// -V, --version              Prints version information</span>
 <span class="doccomment">///</span>
 <span class="doccomment">/// OPTIONS:</span>
-<span class="doccomment">///     -a, --amount &lt;amount&gt;</span>
-<span class="doccomment">///     -r, --receiver &lt;receiver&gt;    Receiver of tokens</span>
-<span class="doccomment">///     -s, --sender &lt;sender&gt;        Sender of tokens</span>
+<span class="doccomment">/// -a, --amount &lt;amount&gt;        </span>
+<span class="doccomment">/// -r, --receiver &lt;receiver&gt;    Receiver of tokens</span>
+<span class="doccomment">/// -s, --sender &lt;sender&gt;        Sender of tokens</span>
+<span class="doccomment">///</span>
 <span class="doccomment">/// ```</span>
 <span class="doccomment">///</span>
 <span class="kw">fn</span> <span class="ident">main</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">Box</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">std</span>::<span class="ident">error</span>::<span class="ident">Error</span><span class="op">&gt;</span><span class="op">&gt;</span> {
