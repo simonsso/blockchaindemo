@@ -28,6 +28,9 @@
 <span id="28">28</span>
 <span id="29">29</span>
 <span id="30">30</span>
+<span id="31">31</span>
+<span id="32">32</span>
+<span id="33">33</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="ident">serde</span>::{<span class="ident">Deserialize</span>, <span class="ident">Serialize</span>};
 
@@ -52,7 +55,10 @@
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">hashable</span>::<span class="ident">Hashable</span>;
 <span class="kw">impl</span> <span class="ident">Hashable</span> <span class="kw">for</span> <span class="ident">Transaction</span> {
     <span class="kw">fn</span> <span class="ident">bytes</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span> {
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">v</span> <span class="op">=</span> <span class="macro">vec</span><span class="macro">!</span>[];
+        <span class="comment">// Expected size is known, lets use it.</span>
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">v</span> <span class="op">=</span> <span class="ident">Vec</span>::<span class="ident">with_capacity</span>(
+            <span class="self">self</span>.<span class="ident">sender</span>.<span class="ident">len</span>() <span class="op">+</span> <span class="self">self</span>.<span class="ident">receiver</span>.<span class="ident">len</span>() <span class="op">+</span> <span class="ident">std</span>::<span class="ident">mem</span>::<span class="ident">size_of_val</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">amount</span>),
+        );
         <span class="ident">v</span>.<span class="ident">extend</span>(<span class="self">self</span>.<span class="ident">sender</span>.<span class="ident">as_bytes</span>());
         <span class="ident">v</span>.<span class="ident">extend</span>(<span class="self">self</span>.<span class="ident">receiver</span>.<span class="ident">as_bytes</span>());
         <span class="ident">v</span>.<span class="ident">extend</span>(<span class="self">self</span>.<span class="ident">amount</span>.<span class="ident">to_be_bytes</span>().<span class="ident">iter</span>());
