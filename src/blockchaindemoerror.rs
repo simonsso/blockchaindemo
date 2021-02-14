@@ -1,5 +1,7 @@
 use std::fmt;
 
+/// Errors originating in blockchaindemo application
+/// errors originating in libraries are propagated unmodified
 #[derive(Debug)]
 pub enum BlockChainDemoError {
     /// Error caused by abuse to user interface

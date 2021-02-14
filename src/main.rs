@@ -3,7 +3,7 @@ use blockchaindemolib::*;
 /// A simple demo
 ///
 /// Run from command line without argument to verify integrity of blockchain and with transaction to create and mine a transaction on the blockchain.
-/// ```text 
+/// ```text
 /// USAGE:
 /// blockchaindemo transaction [FLAGS] --amount <amount> --receiver <receiver> --sender <sender>
 ///
@@ -11,7 +11,7 @@ use blockchaindemolib::*;
 /// -d, --doubledifficultly    
 /// -h, --help                 Prints help information
 /// -V, --version              Prints version information
-/// 
+///
 /// OPTIONS:
 /// -a, --amount <amount>        
 /// -r, --receiver <receiver>    Receiver of tokens
