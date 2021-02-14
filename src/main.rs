@@ -3,18 +3,20 @@ use blockchaindemolib::*;
 /// A simple demo
 ///
 /// Run from command line without argument to verify integrity of blockchain and with transaction to create and mine a transaction on the blockchain.
-/// ```text
+/// ```text 
 /// USAGE:
-/// blockchaindemo transaction --amount <amount> --receiver <receiver> --sender <sender>
+/// blockchaindemo transaction [FLAGS] --amount <amount> --receiver <receiver> --sender <sender>
 ///
 /// FLAGS:
-///     -h, --help       Prints help information
-///     -V, --version    Prints version information
-///
+/// -d, --doubledifficultly    
+/// -h, --help                 Prints help information
+/// -V, --version              Prints version information
+/// 
 /// OPTIONS:
-///     -a, --amount <amount>
-///     -r, --receiver <receiver>    Receiver of tokens
-///     -s, --sender <sender>        Sender of tokens
+/// -a, --amount <amount>        
+/// -r, --receiver <receiver>    Receiver of tokens
+/// -s, --sender <sender>        Sender of tokens
+///
 /// ```
 ///
 fn main() -> Result<(), Box<dyn std::error::Error>> {
