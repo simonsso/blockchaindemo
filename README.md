@@ -23,15 +23,15 @@ blockchaindemo
 ### Add a transaction to the chain
 <pre>
 USAGE:
-blockchaindemo transaction --amount <amount> --receiver <receiver> --sender <sender>
+    blockchaindemo transaction [FLAGS] --amount <amount> --receiver <receiver> --sender <sender>
 
 FLAGS:
-    -h, --help       Prints help information
-    -V, --version    Prints version information
+    -d, --doubledifficultly    
+    -h, --help                 Prints help information
+    -V, --version              Prints version information
 
 OPTIONS:
-    -a, --amount <amount>
+    -a, --amount <amount>        
     -r, --receiver <receiver>    Receiver of tokens
     -s, --sender <sender>        Sender of tokens
-
 </pre>
